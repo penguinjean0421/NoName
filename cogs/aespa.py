@@ -56,24 +56,24 @@ class Aespa(commands.Cog) :
         await ctx.send(embed = embed)
 
     @commands.command(name = "aespa", aliases = ['에스파'])
-    async def aespa(self, ctx):
+    async def aespa(self, ctx) :
         await self.send_sns_embed(ctx, "aespa")
 
     @commands.command(name = "karina", aliases = ['카리나'])
-    async def karina(self, ctx):
+    async def karina(self, ctx) :
         await self.send_sns_embed(ctx, "karina")
 
     @commands.command(name = "giselle", aliases = ['지젤'])
-    async def giselle(self, ctx):
+    async def giselle(self, ctx) :
         await self.send_sns_embed(ctx, "giselle")
 
     @commands.command(name = "winter", aliases = [ '윈터'])
-    async def winter(self, ctx):
+    async def winter(self, ctx) :
         await self.send_sns_embed(ctx, "winter")
 
     @commands.command(name = "ningning", aliases = ['닝닝'])
-    async def ningning(self, ctx):
+    async def ningning(self, ctx) :
         await self.send_sns_embed(ctx, "ningning")
 
-async def setup(bot):
+async def setup(bot) :
     await bot.add_cog(Aespa(bot))

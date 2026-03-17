@@ -9,10 +9,10 @@ class Utility(commands.Cog) :
     @commands.command(name = "choose")
     async def choose(self, ctx, *options) : 
         if len (options) < 2 :
-            await ctx.send ("최소 2개이상의 선택지를 제시해라 좀.")
+            await ctx.send("최소 2개이상의 선택지를 제시해라 좀.")
         else :
             select = random.choice(options)
             await ctx.send(f"{select}")
 
-async def setup(bot):
+async def setup(bot) :
     await bot.add_cog(Utility(bot))

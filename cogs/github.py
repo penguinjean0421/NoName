@@ -17,7 +17,7 @@ class Github(commands.Cog) :
             }
         }
 
-    async def send_github_embed(self, ctx, name) :
+    async def send_github_embed(self, ctx, name) : 
         data = self.github_data[name]
         embed = discord.Embed(
             title = f"{data['title']}",
@@ -35,5 +35,5 @@ class Github(commands.Cog) :
     async def personal_github(self, ctx) :
         await self.send_github_embed(ctx, "penguinjean0421")
 
-async def setup(bot):
+async def setup(bot) :
     await bot.add_cog(Github(bot))
