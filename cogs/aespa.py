@@ -44,12 +44,11 @@ class Aespa(commands.Cog) :
     # SNS 임베드
     async def send_sns_embed(self, ctx, name, region = None) :
         data = self.aespa_data[name]
-        if name == "aespa" :
-            embed = discord.Embed(
+        embed = discord.Embed(
             title = f"{data['emoji']} Be my æ, {name}'s SNS",
             color = data['color']
             )
-
+        if name == "aespa" :
             if region in ["kr", "kor", "korea", "대한민국", "한국"] :
                 embed.add_field(name = "Instagram", value = f"[바로가기](https://www.instagram.com/{data['id']})", inline = True)
                 embed.add_field(name = "Tiktok", value = f"[바로가기](https://www.tiktok.com/@{data['id1']})",inline = True)
@@ -76,11 +75,11 @@ class Aespa(commands.Cog) :
                 embed.add_field(name = "Youtube", value = f"[바로가기](https://www.youtube.com/@{name})", inline = True)
 
         elif name in ["karina", "giselle", "winter"] : 
-            embed.add_field(name = "Instagram", value = f"[@{data['instagram']}](https://www.instagram.com/{data['instagram']})", inline = False)
+            embed.add_field(name = "Instagram", value = f"[바로가기](https://www.instagram.com/{data['instagram']})", inline = False)
 
         elif name == "ningning" :
-            embed.add_field(name = "Instagram", value = f"[@{data['instagram']}](https://www.instagram.com/{data['instagram']})", inline = False)
-            embed.add_field(name = "Weibo", value = f"[{name} Weibo 바로가기](https://weibo.com/u/{data['weibo']})", inline = False)
+            embed.add_field(name = "Instagram", value = f"[바로가기](https://www.instagram.com/{data['instagram']})", inline = False)
+            embed.add_field(name = "Weibo", value = f"[바로가기](https://weibo.com/u/{data['weibo']})", inline = False)
 
         await ctx.send(embed = embed)
 
