@@ -5,13 +5,6 @@ class Github(commands.Cog) :
     def __init__(self, bot) :
         self.bot = bot
         self.github_data = {
-            "slave" : {
-                "id" : "penguinjean0421/Slave", 
-                "title" : "📂 Slave's Body",
-                "description" : "저의 대한 정보는 여기 있어요",
-                "color" : 0x9ceafe, 
-                "aliases" : ["노예", "슬레이브", "소스코드"]
-            }, 
             "2358006" : { 
                 "id" : "2358006",
                 "title" : "📂 과제 아카이브",
@@ -28,7 +21,7 @@ class Github(commands.Cog) :
             },
         }
 
-    async def send_github_embed(self, ctx, name) : 
+    async def send_github(self, ctx, name) : 
         data = self.github_data[name]
         embed = discord.Embed(
             title = f"{data['title']}",
@@ -41,7 +34,7 @@ class Github(commands.Cog) :
     @commands.command(name = "github", aliases = ["깃허브"])
     async def github_search(self, ctx, *, search_text: str = None):
         if search_text is None:
-            return await ctx.send("❓ 사용법: `!github slave` 또는 `!github 슬레이브`")
+            return await ctx.send("❓ 사용법: `!github 2358006` 또는 `!github 펭귄진`")
         target_name = None
         clean_text = search_text.lower().replace(" ", "")
         for key, info in self.github_data.items() :
@@ -49,7 +42,7 @@ class Github(commands.Cog) :
                 target_name = key
                 break
         if target_name :
-            await self.send_github_embed(ctx, target_name)
+            await self.send_github(ctx, target_name)
         else:
             await ctx.send(f"🔍 '{search_text}'에 해당하는 정보를 찾을 수 없습니다.")
 
