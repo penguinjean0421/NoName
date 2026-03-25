@@ -9,7 +9,7 @@ class Information(commands.Cog) :
                 "name" : "Slave",
                 "description" : "서버에 초대해 주셔서 감사합니다!\n", 
                 "description1" : "즐거운 서버 활동을 돕기 위한 주요 명령어들을 안내해 드립니다.\n",
-                "color" : 0x2b3137, 
+                "color" : 0x007acc,
             },
         }
 
@@ -19,7 +19,7 @@ class Information(commands.Cog) :
                 "developer" : "penguinjean0421",
                 "illustrator" : "aram", 
                 "supporter" : "목대 겜소과 친목 디코",
-                "color" : 0x0f4c81, 
+                "color" : 0x5d2b90, 
             },
         }
 
@@ -32,18 +32,18 @@ class Information(commands.Cog) :
 
     async def send_welcome_help(self, channel, name):
         data = self.bot_data[name]
-        embed = discord.Embed(
-            title = f"👋 {data['name']} 입니다.",
-            description = f"{data['description']} {data['description1']}",
-            color = data['color']
-        )
-        embed.add_field(name = "🆔 Prefix", value = "`æ`", inline = True)
-        embed.add_field(name = "📖 도움말", value = "`help` / `help 관리자`", inline = True)
-        embed.add_field(name = "🛠️ 관리 기능", value = "상세 명령는 `æhelp 관리자` 참고", inline = False)
-        embed.add_field(name = "💻 깃허브", value = "`github 과제`", inline = True)
-        embed.add_field(name = "🛠️ 유틸리티", value = "`choose [A] [B]`", inline = True)
+        prefix = self.bot.command_prefix
+        if isinstance(prefix, list): prefix = prefix[0]
+
+        embed = discord.Embed(title = f"👋 {data['name']} 입니다.", description = f"{data['description']}{data['description1']}", color = data['color'])
+        embed.add_field(name = "🆔 접두사(Prefix)", value = f"`{prefix}`", inline = True)
+        embed.add_field(name = "📖 도움말 명령어", value = f"`{prefix}help` / `{prefix}help 관리자`", inline = True)
+        embed.add_field(name = "⚙️ 서버 관리", value = f"상세 명령은 `{prefix}help 관리자` 참고", inline = False)        
+        embed.add_field(name = "💻 오픈소스", value = f"`{prefix}github 과제`", inline = True)
+        embed.add_field(name = "✨ 유틸리티", value = f"`{prefix}choose [A] [B]`", inline = True)
         embed.set_thumbnail(url = self.bot.user.display_avatar.url)
-        embed.set_footer(text = "상세 도움말은 æhelp를 입력하세요.", icon_url = self.bot.user.display_avatar.url)
+        embed.set_footer(text = f"상세 도움말은 {prefix}help를 입력하세요.", icon_url = self.bot.user.display_avatar.url)
+        
         await channel.send(embed = embed)
 
     async def send_admin_help(self, channel, prefix):
