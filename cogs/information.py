@@ -40,7 +40,7 @@ class Information(commands.Cog) :
         embed.add_field(name = "📖 도움말 명령어", value = f"`{prefix}help` / `{prefix}help 관리자`", inline = False)
         embed.add_field(name = "⚙️ 서버 관리", value = f"상세 명령은 `{prefix}help 관리자` 참고", inline = False)        
         embed.add_field(name = "💻 오픈소스", value = f"`{prefix}github 과제`", inline = False)
-        embed.add_field(name = "✨ 유틸리티", value = f"`{prefix}choose [A] [B]`", inline = False)
+        embed.add_field(name = "✨ 유틸리티", value = f"`{prefix}choose [A] [B]`\n `{prefix}menu [종류]`", inline = False)
         embed.set_thumbnail(url = self.bot.user.display_avatar.url)
         embed.set_footer(text = f"상세 도움말은 {prefix}help를 입력하세요.", icon_url = self.bot.user.display_avatar.url)
         
