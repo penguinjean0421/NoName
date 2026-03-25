@@ -142,8 +142,12 @@ class System(commands.Cog):
     @commands.has_permissions(administrator=True)
     async def set_command(self, ctx, target: str = None, channel: discord.TextChannel = None):
         key_map = {"log": "log_channel_id", "bot": "command_channel_id", "punish": "punish_log_channel_id"}
+        
+        prefix = self.bot.command_prefix
+        if isinstance(prefix, list): prefix = prefix[0]
+
         if not target or target.lower() not in key_map:
-            return await ctx.send("❓ 사용법: `!set [log/punish/bot] [#채널]`")
+            return await ctx.send(f"❓ 사용법: `{prefix}set [log/punish/bot] [#채널]`")
         
         target = target.lower()
         target_channel = channel or ctx.channel
@@ -158,6 +162,8 @@ class System(commands.Cog):
     async def reset_command(self, ctx, target: str = None):
         gid = str(ctx.guild.id)
         key_map = {"log": "log_channel_id", "bot": "command_channel_id", "punish": "punish_log_channel_id"}
+        prefix = self.bot.command_prefix
+        if isinstance(prefix, list): prefix = prefix[0]
         if target == "all":
             self.server_configs.pop(gid, None)
             await ctx.send("✅ 모든 설정이 초기화되었습니다.")
@@ -165,7 +171,7 @@ class System(commands.Cog):
             self.server_configs[gid][key_map[target]] = None
             await ctx.send(f"✅ **{target.upper()}** 채널 설정이 해제되었습니다.")
         else:
-            await ctx.send("❓ 사용법: `!reset [log/punish/bot/all]`")
+            await ctx.send(f"❓ 사용법: `{prefix}reset [log/punish/bot/all]`")
         self.save_config()
 
     @commands.command(name="mute", aliases=["뮤트"])
@@ -205,7 +211,9 @@ class System(commands.Cog):
     @commands.has_permissions(administrator=True)    
     async def server_timeout(self, ctx, member: discord.Member = None, time: str = None, *, reason="사유 없음"):
         seconds = self.parse_time(time)
-        if not member or not seconds: return await ctx.send("❓ 사용법: `!timeout @유저 10m [사유]`")
+        prefix = self.bot.command_prefix
+        if isinstance(prefix, list): prefix = prefix[0]
+        if not member or not seconds: return await ctx.send(f"❓ 사용법: `{prefix}timeout @유저 10m [사유]`")
         try:
             await member.timeout(timedelta(seconds=seconds), reason=f"실행자: {ctx.author} | {reason}")
             embed = discord.Embed(title="⏳ 타임아웃", description=f"{member.mention} ({time})\n사유: {reason}", color=0xffa500)

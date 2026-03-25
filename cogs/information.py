@@ -5,7 +5,7 @@ class Information(commands.Cog) :
     def __init__(self, bot) :
         self.bot = bot
         self.help_data = {
-            "bot" : { 
+            "welcome" : { 
                 "name" : "Slave",
                 "greeting" : "서버에 초대해 주셔서 감사합니다!\n", 
                 "summary" : "즐거운 서버 활동을 돕기 위한 주요 명령어들을 안내해 드립니다.\n",
@@ -28,7 +28,7 @@ class Information(commands.Cog) :
         admin_keywords = ["관리자", "어드민", "admin", "management", "administrator"]
         if category and category.lower() in admin_keywords:
             return await self.send_admin_help(ctx.channel, ctx.prefix)
-        await self.send_welcome_help(ctx.channel, "bot")
+        await self.send_welcome_help(ctx.channel, "welcome")
 
     async def send_welcome_help(self, channel, name):
         data = self.help_data[name]
@@ -105,7 +105,7 @@ class Information(commands.Cog) :
         system_cog = self.bot.get_cog('System')
         if system_cog: channel = system_cog.get_log_channel(guild)
         if channel and channel.permissions_for(guild.me).send_messages :
-            await self.send_welcome_help(channel, "bot")
+            await self.send_welcome_help(channel, "welcome")
 
     @commands.command(name = "credit", aliases = ["크레딧"])
     async def credit(self, ctx):

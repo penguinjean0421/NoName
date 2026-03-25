@@ -32,8 +32,10 @@ class Github(commands.Cog) :
 
     @commands.command(name = "github", aliases = ["깃허브"])
     async def github_search(self, ctx, *, search_text: str = None):
+        prefix = self.bot.command_prefix
+        if isinstance(prefix, list): prefix = prefix[0]
         if search_text is None:
-            return await ctx.send("❓ 사용법: `!github 2358006` or `!github 펭귄진`")
+            return await ctx.send(f"❓ 사용법: `{prefix}github 2358006` or `{prefix}github 펭귄진`")
         target_name = None
         clean_text = search_text.lower().replace(" ", "")
         for key, info in self.github_data.items() :

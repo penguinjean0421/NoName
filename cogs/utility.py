@@ -23,10 +23,12 @@ class Utility(commands.Cog) :
     # 제시된 것중에 하나 선택
     @commands.command(name = "choose")
     async def choose(self, ctx, *options) : 
+        prefix = self.bot.command_prefix
+        if isinstance(prefix, list): prefix = prefix[0]
         if len(options) < 2:
             embed = discord.Embed(
                 title="❓ 최소 2개 이상의 선택지를 입력해 주세요!",
-                description="예: `æchoose 짜장면 짬뽕 탕수육`",
+                description=f"예: `{prefix}choose 짜장면 짬뽕 탕수육`",
                 color=0xFF5555
             )
             return await ctx.send(embed=embed)
