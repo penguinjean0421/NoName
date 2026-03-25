@@ -131,6 +131,5 @@ Slave는 각 서버의 독립적인 운영을 위해 `config.json` 파일을 사
 * **GitHub:** [penguinjean0421](https://github.com/penguinjean0421)
 
 ## 📜 라이선스 (License)
-Copyright 2026. **penguinjean0421** All rights reserved.
-이 프로젝트의 코드와 리소스를 무단으로 복제, 수정, 배포하는 것을 금지합니다. 
-개인적인 학습 목적으로만 참고해 주시기 바랍니다.
+* Copyright 2026. **penguinjean0421** All rights reserved.
+    * 이 프로젝트의 코드와 리소스를 무단으로 복제, 수정, 배포하는 것을 금지합니다. 개인적인 학습 목적으로만 참고해 주시기 바랍니다.
