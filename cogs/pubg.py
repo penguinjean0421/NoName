@@ -47,7 +47,7 @@ class PUBGStats(commands.Cog):
                             self.current_season = seasons[-1]['id']
                             print(f"⚠️ 현재 시즌 태그를 찾지 못해 마지막 시즌으로 설정: {self.current_season}")
                     else:
-                        print(f"❌ 시즌 로드 실패 (Status: {resp.status})")
+                        print(f"❌ PUBG 시즌 로드 실패 (Status: {resp.status})")
         except Exception as e:
             print(f"❌ 시즌 정보를 가져오는 중 오류 발생: {e}")
 
@@ -91,7 +91,7 @@ class PUBGStats(commands.Cog):
                 "rounds": rounds
             }
 
-    @commands.command(name="pubg", aliases=["배그", "ㅂ그"])
+    @commands.command(name="pubg")
     async def pubg_stats(self, ctx, plat_or_nick: str, *, nickname: str = None):
         # 플랫폼 판별
         if plat_or_nick.lower() in ['kakao', 'kakaotv', '카카오']:
@@ -105,11 +105,10 @@ class PUBGStats(commands.Cog):
                 description="💡 사용법: `!pubg 닉네임` 또는 `!pubg kakao 닉네임`",
                 color=0xFFFFFF
             )
-            await ctx.send(embed=embed)
-            return
+            return await ctx.send(embed=embed)
 
         # 캐시 로직
-        cache_key = f"{platform}:{target_nick}"
+        cache_key = f"pubg {platform}:{target_nick}"
         try:
             with open(self.cache_file, "r", encoding="utf-8") as f:
                 cache = json.load(f)
@@ -127,8 +126,8 @@ class PUBGStats(commands.Cog):
             if not data or "error" in data:
                 error_msg = data["error"] if data else "플레이어를 찾을 수 없습니다."
                 embed = discord.Embed(description=f"❌ {error_msg}", color=0xE74C3C)
-                await ctx.send(embed=embed)
-                return
+                return await ctx.send(embed=embed)
+
             cache[cache_key] = {"timestamp": current_time, "data": data}
             with open(self.cache_file, "w", encoding="utf-8") as f:
                 json.dump(cache, f, ensure_ascii=False, indent=4)

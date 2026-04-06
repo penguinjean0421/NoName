@@ -131,20 +131,19 @@ class LOLStats(commands.Cog):
                 description=f"❌ 알 수 없는 지역입니다.\n지원: `{valid_list}`",
                 color=0xe74c3c
             )
-            await ctx.send(embed=embed)
-            return
+            return await ctx.send(embed=embed)
 
         # 3. 갱신 키워드 체크 및 ID 분리
         force_update = "갱신" in riot_id_raw
         riot_id = riot_id_raw.replace("갱신", "").strip()
         if "#" not in riot_id:
             embed = discord.Embed(
-                description="💡 예시: `!lol 찾았다오마이걸#0421` 또는 `!lol na Doublelift#NA1`",
+                description="💡 예시: `!lol Hide on bush#KR1` 또는 `!lol na Doublelift#NA1`",
                 color=0xf39c12
             )
-            await ctx.send(embed=embed)
-            return
-        cache_key = f"{platform}:{riot_id}"
+            return await ctx.send(embed=embed)
+            
+        cache_key = f"lol {platform}:{riot_id}"
         try:
             with open(self.cache_file, "r", encoding="utf-8") as f:
                 cache = json.load(f)
@@ -172,8 +171,7 @@ class LOLStats(commands.Cog):
                     description="❌ 소환사를 찾을 수 없습니다. (이름#태그 확인)",
                     color=0xe74c3c
                 )
-                await ctx.send(embed=embed)
-                return
+                return await ctx.send(embed=embed)
 
             # 캐시 저장
             cache[cache_key] = {"timestamp": current_time, "data": data}
@@ -212,7 +210,7 @@ class LOLStats(commands.Cog):
             inline=True
         )
 
-        embed.add_field(name="🔗 자세한 전적 (OP.GG)", value=f"[클릭하여 이동]({opgg_url})", inline=False)
+        embed.add_field(name="🔗 자세한 전적 (OP.GG)", value=f"[전적 보러가기]({opgg_url})", inline=False)
         embed.set_footer(text=footer)
         await ctx.send(embed=embed)
 
