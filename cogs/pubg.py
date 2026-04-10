@@ -20,7 +20,7 @@ class PUBGStats(commands.Cog):
             "Accept": "application/vnd.api+json"
         }
         self.current_season = None
-        self.main_color = 0xF1C40F  # 기본 컬러 설정
+        self.main_color = 0xD4AC0D
 
         base_path = os.path.dirname(os.path.abspath(__file__))
         self.cache_file = os.path.join(base_path, "..", "tracking.json")
@@ -73,10 +73,12 @@ class PUBGStats(commands.Cog):
                 if resp.status != 200:
                     return {"error": "전적 데이터를 가져올 수 없습니다."}
                 stats_json = await resp.json()
+            
             modes = stats_json['data']['attributes']['gameModeStats']
             squad = modes.get('squad', {})
             if squad.get('roundsPlayed', 0) == 0:
                 return {"error": "이번 시즌 플레이 기록이 없습니다."}
+            
             rounds = squad['roundsPlayed']
             wins = squad['wins']
             kills = squad['kills']
@@ -103,7 +105,7 @@ class PUBGStats(commands.Cog):
         if not target_nick:
             embed = discord.Embed(
                 description="💡 사용법: `!pubg 닉네임` 또는 `!pubg kakao 닉네임`",
-                color=0xFFFFFF
+                color=0x95A5A6
             )
             return await ctx.send(embed=embed)
 

@@ -129,7 +129,7 @@ class LOLStats(commands.Cog):
             valid_list = ", ".join(self.platform_alias.keys())
             embed = discord.Embed(
                 description=f"❌ 알 수 없는 지역입니다.\n지원: `{valid_list}`",
-                color=0xe74c3c
+                color=0xE74C3C
             )
             return await ctx.send(embed=embed)
 
@@ -139,7 +139,7 @@ class LOLStats(commands.Cog):
         if "#" not in riot_id:
             embed = discord.Embed(
                 description="💡 예시: `!lol Hide on bush#KR1` 또는 `!lol na Doublelift#NA1`",
-                color=0xf39c12
+                color=0x95A5A6
             )
             return await ctx.send(embed=embed)
             
@@ -169,7 +169,7 @@ class LOLStats(commands.Cog):
             if not data:
                 embed = discord.Embed(
                     description="❌ 소환사를 찾을 수 없습니다. (이름#태그 확인)",
-                    color=0xe74c3c
+                    color=0xE74C3C
                 )
                 return await ctx.send(embed=embed)
 
@@ -185,7 +185,7 @@ class LOLStats(commands.Cog):
         opgg_url = f"https://www.op.gg/summoners/{opgg_region}/{encoded_id}"
 
         title = f"🎮 [{platform.upper()}] {riot_id} (Lv.{data['level']})"
-        embed = discord.Embed(title=title, color=0x1abc9c)
+        embed = discord.Embed(title=title, color=0x1ABC9C)
         embed.set_thumbnail(
             url=f"https://ddragon.leagueoflegends.com/cdn/14.6.1/img/profileicon/{data['icon']}.png"
         )

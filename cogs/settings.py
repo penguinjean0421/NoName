@@ -85,7 +85,7 @@ class Settings(commands.Cog):
         self.server_configs[gid][key_map[target]] = target_channel.id
         embed = discord.Embed(
             description=f"✅ **{target.upper()}** 채널이 {target_channel.mention}로 설정되었습니다.",
-            color=0x3498DB
+            color=0x2ECC71
         )
 
         if target == "ticket":
@@ -97,7 +97,7 @@ class Settings(commands.Cog):
                     self.server_configs[gid]["ticket_panel_msg_id"] = panel_msg.id
                     embed = discord.Embed(
                         description=f"✅ 티켓 패널이 {target_channel.mention}에 생성되었습니다.\n(ID: {panel_msg.id})",
-                        color=0x3498DB
+                        color=0x2ECC71
                     )
                 else:
                     embed = discord.Embed(description="❌ 티켓 메시지 생성에 실패했습니다.", color=0xE74C3C)
@@ -124,7 +124,7 @@ class Settings(commands.Cog):
         if target == "all":
             await self.delete_ticket_panel(ctx.guild)
             self.server_configs.pop(gid, None)
-            embed = discord.Embed(description="✅ 모든 설정이 초기화되었습니다.", color=0xE67E22)
+            embed = discord.Embed(description="✅ 모든 설정이 초기화되었습니다.", color=0xE74C3C)
         elif target and target.lower() in key_map:
             target = target.lower()
             if target == "ticket":

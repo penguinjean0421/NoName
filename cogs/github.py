@@ -8,13 +8,11 @@ class Github(commands.Cog):
             "2358006": {
                 "title": "📂 과제 아카이브",
                 "description": "과제는 여기에 모아뒀어요.",
-                "color": 0x2b3137,
                 "aliases": ["과제", "레포트", "이삼오팔공공육", "2358006"]
             },
             "penguinjean0421": {
                 "title": "📂 penguinjean's Github",
                 "description": "수업시간에 심심해서 Slave를 탄생 시킨 사람의 깃허브",
-                "color": 0x0f4c81,
                 "aliases": ["penguinjean", "jean", "펭귄진", "펭귄청바지"]
             },
         }
@@ -25,7 +23,7 @@ class Github(commands.Cog):
         embed = discord.Embed(
             title=data['title'],
             description=data['description'],
-            color=data['color']
+            color=0x2b3137
         )
         embed.add_field(name="👤 GitHub ID", value=f"`{name}`", inline=True)
         embed.add_field(
@@ -49,12 +47,13 @@ class Github(commands.Cog):
         prefix = ctx.prefix
 
         if search_text is None:
+            # 중립/시스템 안내 색상 (Concrete)
             embed = discord.Embed(
                 description=(
                     f"❓ **사용법:** `{prefix}github [키워드]`\n"
                     f"예: `{prefix}github 과제` 또는 `{prefix}github 펭귄진`"
                 ),
-                color=0x95A5A6
+                color=0x95A5A6 
             )
             return await ctx.send(embed=embed)
 
@@ -69,6 +68,7 @@ class Github(commands.Cog):
         if target_name:
             await self.send_github_embed(ctx, target_name)
         else:
+            # 오류/결과 없음 표준 색상 (Alizarin)
             embed = discord.Embed(
                 description=f"🔍 '{search_text}'에 해당하는 정보를 찾을 수 없습니다.",
                 color=0xE74C3C

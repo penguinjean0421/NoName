@@ -9,8 +9,7 @@ class Information(commands.Cog):
                 "name": "Slave",
                 "greeting": "서버에 초대해 주셔서 감사합니다!\n",
                 "summary": "즐거운 서버 활동을 돕기 위한 주요 명령어들을 안내해 드립니다.\n",
-                "theme_color": 0x007acc,
-            },
+               },
         }
 
         self.credit_data = {
@@ -19,7 +18,6 @@ class Information(commands.Cog):
                 "developer": "penguinjean0421",
                 "illustrator": "aram",
                 "supporter": "목대 겜소과 친목 디코",
-                "theme_color": 0x5d2b90,
             },
         }
 
@@ -34,7 +32,7 @@ class Information(commands.Cog):
         embed = discord.Embed(
             title=f"👋 {data['name']} 입니다.",
             description=f"{data['greeting']}{data['summary']}",
-            color=data['theme_color']
+            color=0x5d2b90
         )
         embed.add_field(name="🆔 접두사(Prefix)", value=f"`{prefix}`", inline=False)
         embed.add_field(
@@ -132,7 +130,7 @@ class Information(commands.Cog):
         embed = discord.Embed(
             title=f"Thanks for using {data['bot_name']}",
             description=f"{data['bot_name']}를 함께 만들어주신 분들입니다.",
-            color=data['theme_color']
+            color=0x5d2b90
         )
         embed.add_field(
             name="👤 Developer",
@@ -158,3 +156,6 @@ class Information(commands.Cog):
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Information(bot))
+    
+    
+        # 0x5d2b90 0x007acc
