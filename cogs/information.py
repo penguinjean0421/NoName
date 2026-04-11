@@ -1,5 +1,7 @@
 import discord
+from discord import app_commands
 from discord.ext import commands
+from typing import Optional, Literal
 
 class Information(commands.Cog):
     def __init__(self, bot):
@@ -9,7 +11,7 @@ class Information(commands.Cog):
                 "name": "Slave",
                 "greeting": "서버에 초대해 주셔서 감사합니다!\n",
                 "summary": "즐거운 서버 활동을 돕기 위한 주요 명령어들을 안내해 드립니다.\n",
-                },
+            },
         }
 
         self.credit_data = {
@@ -21,50 +23,31 @@ class Information(commands.Cog):
             },
         }
 
-    # --- 도움말 관련 메서드 ---
+    # --- 공통 임베드 생성 메서드 (재사용 가능) ---
 
-    async def send_welcome_help(self, channel: discord.abc.Messageable, name: str, prefix: str = None):
-        data = self.help_data.get(name) or self.help_data["welcome"]
-        if prefix is None:
-            prefix = self.bot.command_prefix
-            if isinstance(prefix, list):
-                prefix = prefix[0]
+    def create_welcome_embed(self) -> discord.Embed:
+        data = self.help_data["welcome"]
         embed = discord.Embed(
             title=f"👋 {data['name']} 입니다.",
             description=f"{data['greeting']}{data['summary']}",
             color=0x5d2b90
         )
-        embed.add_field(name="🆔 접두사(Prefix)", value=f"`{prefix}`", inline=False)
-        embed.add_field(
-            name="📖 도움말 명령어",
-            value=f"`{prefix}help` / `{prefix}help 관리자`",
-            inline=True
-        )
-        embed.add_field(name="✨ 유틸리티", value=f"`{prefix}choose`, `{prefix}menu`", inline=True)
-        embed.add_field(
-            name="🎮 게임 전적 조회",
-            value=f"`{prefix}lol 국가 닉네임#태그`\n`{prefix}pubg 플랫폼 닉네임`",
-            inline=True
-        )
-        embed.add_field(
-            name="⚙️ 서버 관리",
-            value=f"상세 명령어는 `{prefix}help 관리자`를 참고하세요.",
-            inline=False
-        )
-        embed.add_field(name="📚 과제도움", value=f"`{prefix}github 과제`", inline=False)
+        embed.add_field(name="🆔 명령어 방식", value="`모든 명령어는 슬래시(/)를 사용합니다.`", inline=False)
+        embed.add_field(name="📖 도움말", value="`/help`, `/help 카테고리:관리자`", inline=True)
+        embed.add_field(name="✨ 유틸리티", value="`/choose`, `/menu`", inline=True)
+        embed.add_field(name="🎮 게임 전적", value="`/lol`, `/pubg`", inline=True)
+        embed.add_field(name="⚙️ 서버 관리", value="상세 명령어는 `/help 카테고리:관리자` 참고", inline=False)
+        embed.add_field(name="📚 과제도움", value="`/github`", inline=False)
         embed.add_field(
             name="💻 소스보기",
             value=f"[`GitHub Repository`](https://github.com/{self.credit_data['credit']['developer']}/{data['name']})",
             inline=False
         )
         embed.set_thumbnail(url=self.bot.user.display_avatar.url)
-        embed.set_footer(
-            text=f"상세 도움말은 {prefix}help를 입력하세요.",
-            icon_url=self.bot.user.display_avatar.url
-        )
-        await channel.send(embed=embed)
+        embed.set_footer(text="상세 도움말은 /help를 입력하세요.")
+        return embed
 
-    async def send_admin_help(self, ctx: commands.Context, prefix: str):
+    def create_admin_embed(self) -> discord.Embed:
         embed = discord.Embed(
             title="🛠️ 서버 관리자 명령어 가이드",
             description="서버 관리 권한이 있는 멤버만 사용 가능한 명령어입니다.",
@@ -72,71 +55,63 @@ class Information(commands.Cog):
         )
         embed.add_field(
             name="🔇 음성 제재",
-            value=(
-                f"`{prefix}mute [유저] (시간)` : 마이크 차단\n"
-                f"`{prefix}unmute [유저]` : 마이크 해제\n"
-                f"`{prefix}vckick [유저] (사유)` : 음성 채널 강제 퇴장"
-            ),
-            inline=False
+            value="`/mute`, `/unmute`, `/vckick`",
+            inline=True
         )
         embed.add_field(
             name="🔨 서버 제재",
-            value=(
-                f"`{prefix}timeout [유저] [시간] (사유)` : 타임아웃\n"
-                f"`{prefix}kick [유저] (사유)` : 서버 추방\n"
-                f"`{prefix}ban [유저] (사유)` : 서버 차단\n"
-                f"`{prefix}unban [ID/닉네임]` : 차단 해제"
-            ),
-            inline=False
+            value="`/timeout`, `/kick`, `/ban`, `/unban`",
+            inline=True
         )
         embed.add_field(
             name="⚙️ 시스템 설정",
-            value=(
-                f"`{prefix}set [log/punish/bot/ticket] [#채널]` : 채널 설정\n"
-                f"`{prefix}reset [log/punish/bot/ticket]` : 설정 해제\n"
-                f"`{prefix}reset all` : 모든 설정 초기화"
-            ),
-            inline=False
+            value="`/set`, `/reset`",
+            inline=True
         )
         embed.add_field(
             name="🎫 티켓 시스템",
-            value=(
-                f"`{prefix}open` : 티켓 열기\n"
-                f"`{prefix}close` : 티켓 닫기 버튼 전송\n"
-                f"`{prefix}answer` : 답변을 임베드로 전송"
-                ), 
-                inline=False,
+            value="`/open`, `/close`, `/answer`", 
+            inline=False,
         )
+        embed.set_footer(text="시간 단위: s(초), m(분), h(시간), d(일) | 예: 10m, 1d")
+        return embed
 
-        embed.set_thumbnail(url=self.bot.user.display_avatar.url)
-        embed.set_footer(
-            text="시간 단위: s(초), m(분), h(시간), d(일) | 예: 10m, 1d",
-            icon_url=self.bot.user.display_avatar.url
-        )
-        await ctx.send(embed=embed)
+    # --- 이벤트 리스너 ---
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: discord.Guild):
-        system_cog = self.bot.get_cog('System')
+        # Settings 또는 Logger Cog에서 채널 가져오기 시도
+        system_cog = self.bot.get_cog('Settings') or self.bot.get_cog('Logger')
         channel = None
-        if system_cog:
+        if system_cog and hasattr(system_cog, 'get_log_channel'):
             channel = system_cog.get_log_channel(guild)
-        if not channel:
-            channel = guild.system_channel
-        if channel and channel.permissions_for(guild.me).send_messages:
-            await self.send_welcome_help(channel, "welcome")
+            
+        target = channel or guild.system_channel
+        if target and target.permissions_for(guild.me).send_messages:
+            await target.send(embed=self.create_welcome_embed())
 
-    @commands.command(name="help", aliases=["도움말", "guide"])
-    async def help_command(self, ctx: commands.Context, category: str = None):
-        admin_keywords = ["관리자", "어드민", "admin", "management", "administrator"]
-        if category and category.lower() in admin_keywords:
-            return await self.send_admin_help(ctx, ctx.prefix)
-        await self.send_welcome_help(ctx.channel, "welcome", ctx.prefix)
+    # --- 슬래시 명령어 ---
 
-    # --- 크레딧 관련 메서드 ---
+    @app_commands.command(name="help", description="봇의 사용 방법 및 명령어 목록을 확인합니다.")
+    @app_commands.describe(카테고리="조회할 도움말 카테고리를 선택하세요.")
+    async def help_slash(
+        self, 
+        interaction: discord.Interaction, 
+        카테고리: Optional[Literal["일반", "관리자"]] = "일반"
+    ):
+        if 카테고리 == "관리자":
+            # 관리자 권한 확인 (선택 사항)
+            if not interaction.user.guild_permissions.administrator:
+                return await interaction.response.send_message("❌ 관리자 도움말은 관리자만 열람할 수 있습니다.", ephemeral=True)
+            embed = self.create_admin_embed()
+        else:
+            embed = self.create_welcome_embed()
+            
+        await interaction.response.send_message(embed=embed)
 
-    async def send_credit(self, ctx: commands.Context, name: str):
-        data = self.credit_data[name]
+    @app_commands.command(name="credit", description="봇 개발진 및 도움을 주신 분들을 확인합니다.")
+    async def credit_slash(self, interaction: discord.Interaction):
+        data = self.credit_data["credit"]
         embed = discord.Embed(
             title=f"Thanks for using {data['bot_name']}",
             description=f"{data['bot_name']}를 함께 만들어주신 분들입니다.",
@@ -158,11 +133,8 @@ class Information(commands.Cog):
 
         embed.set_thumbnail(url=self.bot.user.display_avatar.url)
         embed.set_footer(text=f"© 2026 {data['developer']} All rights reserved.")
-        await ctx.send(embed=embed)
 
-    @commands.command(name="credit", aliases=["크레딧"])
-    async def credit(self, ctx: commands.Context):
-        await self.send_credit(ctx, "credit")
+        await interaction.response.send_message(embed=embed)
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Information(bot))

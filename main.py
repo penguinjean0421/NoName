@@ -11,8 +11,7 @@ load_dotenv()
 
 class Slave(commands.Bot):
     def __init__(self):
-        raw_prefixes = os.getenv("BOT_PREFIXES")
-        prefixes: List[str] = [p.strip() for p in raw_prefixes.split(",")]
+        prefixes: List[str] = [p.strip() for p in os.getenv("BOT_PREFIXES").split(",")]
 
         intents = discord.Intents.default()
         intents.members = True
@@ -20,7 +19,7 @@ class Slave(commands.Bot):
         intents.voice_states = True
 
         super().__init__(
-            command_prefix=prefixes,
+            command_prefix=commands.when_mentioned_or(prefixes),
             intents=intents,
             help_command=None
         )
@@ -39,12 +38,9 @@ class Slave(commands.Bot):
                 print(f"✅ {cog_name} 로드 성공")
             except Exception as e:
                 print(f"❌ {cog_name} 로드 실패 -> {e}")
-
-    @commands.Cog.listener()
-    async def on_command_completion(self, ctx):
-        """봇의 모든 명령어 성공 시 유저의 입력 메시지를 자동 삭제합니다."""
-        if ctx.guild and ctx.channel.permissions_for(ctx.guild.me).manage_messages:
-            await ctx.message.delete()
+            
+            await self.tree.sync()
+            print("🌐 슬래시 명령어 전역 동기화 완료")
 
     async def on_ready(self):
         print("-" * 30)
@@ -60,6 +56,7 @@ async def main():
     if not token:
         print("❌ 오류: BOT_TOKEN이 .env 파일에 설정되지 않았습니다.")
         return
+
     async with bot:
         try:
             await bot.start(token)
