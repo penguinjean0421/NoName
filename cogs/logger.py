@@ -1,35 +1,45 @@
-import asyncio
-import json
-import os
-import re
 from datetime import datetime
+from typing import Optional
 
 import discord
 from discord.ext import commands
 
 class Logger(commands.Cog):
     def __init__(self, bot):
-            self.bot = bot
+        self.bot = bot
 
-    def get_log_channel(self, guild, type="general"):
+    def get_log_channel(self, guild: discord.Guild, log_type: str = "general") -> Optional[discord.TextChannel]:
+        """설정된 로그 채널을 가져옵니다. 설정이 없으면 시스템 채널을 반환합니다."""
         settings = self.bot.get_cog('Settings')
-        if not settings: return guild.system_channel
+        if not settings:
+            return guild.system_channel
+        
+        # Settings Cog에서 데이터 가져오기
         data = settings.get_server_data(guild)
-        if type == "punish":
+        
+        if log_type == "punish":
             chn_id = data.get("punish_log_channel_id") or data.get("log_channel_id")
         else:
             chn_id = data.get("log_channel_id")
             
-        return self.bot.get_channel(chn_id) if chn_id else guild.system_channel
+        channel = self.bot.get_channel(chn_id) if chn_id else None
+        return channel or guild.system_channel
 
-    async def send_log(self, guild, embed, type="general"):
-        log_channel = self.get_log_channel(guild, type)
+    async def send_log(self, guild: discord.Guild, embed: discord.Embed, log_type: str = "general"):
+        """최종적으로 로그 채널에 메시지를 전송합니다."""
+        if not guild:
+            return
+        log_channel = self.get_log_channel(guild, log_type)
+        
         if log_channel and log_channel.permissions_for(guild.me).send_messages:
-            if not embed.timestamp: embed.timestamp = datetime.now()
+            if not embed.timestamp:
+                embed.timestamp = datetime.now()
             await log_channel.send(embed=embed)
 
+    # --- 이벤트 리스너 (자동 작동) ---
     @commands.Cog.listener()
-    async def on_member_join(self, member):
+    async def on_member_join(self, member: discord.Member):
+        """멤버 입장 로그"""
         embed = discord.Embed(
             title="📥 멤버 입장",
             description=f"{member.mention} **{member}** 님이 입장했습니다.",
@@ -40,7 +50,8 @@ class Logger(commands.Cog):
         await self.send_log(member.guild, embed)
 
     @commands.Cog.listener()
-    async def on_member_remove(self, member):
+    async def on_member_remove(self, member: discord.Member):
+        """멤버 퇴장 로그"""
         embed = discord.Embed(
             title="📤 멤버 퇴장",
             description=f"**{member}** 님이 서버를 떠났습니다.",
@@ -50,9 +61,11 @@ class Logger(commands.Cog):
         await self.send_log(member.guild, embed)
 
     @commands.Cog.listener()
-    async def on_message_edit(self, before, after):
+    async def on_message_edit(self, before: discord.Message, after: discord.Message):
+        """메시지 수정 로그"""
         if before.author.bot or before.content == after.content:
             return
+            
         embed = discord.Embed(title="📝 메시지 수정됨", url=after.jump_url, color=0xF1C40F)
         embed.set_author(name=f"{before.author}", icon_url=before.author.display_avatar.url)
         embed.add_field(name="수정 전", value=f"```{before.content or '내용 없음'}```", inline=False)
@@ -60,9 +73,11 @@ class Logger(commands.Cog):
         await self.send_log(before.guild, embed)
 
     @commands.Cog.listener()
-    async def on_message_delete(self, message):
+    async def on_message_delete(self, message: discord.Message):
+        """메시지 삭제 로그"""
         if message.author.bot or not message.guild:
             return
+
         embed = discord.Embed(title="🗑️ 메시지 삭제됨", color=0xE74C3C)
         embed.description = (
             f"**작성자:** {message.author.mention}\n"
@@ -72,7 +87,8 @@ class Logger(commands.Cog):
         await self.send_log(message.guild, embed)
 
     @commands.Cog.listener()
-    async def on_voice_state_update(self, member, before, after):
+    async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
+        """음성 채널 상태 변경 로그"""
         if before.channel == after.channel:
             return
         user_info = f"{member.mention} **({member.id})**"
@@ -82,7 +98,7 @@ class Logger(commands.Cog):
         elif not after.channel:
             desc, color = f"🔇 {user_info} 님이 **{before.channel.name}** 퇴장", 0x95A5A6
         else:
-            desc, color = f"🔄 {user_info}: **{before.channel.name}** ➡ **{after.channel.name}**", 0xF1C40F
+            desc, color = f"🔄 {user_info} 채널 이동: **{before.channel.name}** ➡ **{after.channel.name}**", 0xF1C40F
             
         await self.send_log(member.guild, discord.Embed(description=desc, color=color))
 
