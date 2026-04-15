@@ -6,7 +6,7 @@ from urllib.parse import quote
 
 import aiohttp
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -36,22 +36,6 @@ class LOLStats(commands.Cog):
         if not os.path.exists(self.cache_file):
             with open(self.cache_file, "w", encoding="utf-8") as f:
                 json.dump({}, f)
-
-        if not self.clean_cache_task.is_running():
-            self.clean_cache_task.start()
-
-    @tasks.loop(minutes=10)
-    async def clean_cache_task(self):
-        try:
-            with open(self.cache_file, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            current_time = time.time()
-            # 30분(1800초) 지난 캐시 삭제
-            new_data = {k: v for k, v in data.items() if current_time - v['timestamp'] < 1800}
-            with open(self.cache_file, "w", encoding="utf-8") as f:
-                json.dump(new_data, f, ensure_ascii=False, indent=4)
-        except Exception as e:
-            print(f"캐시 정리 중 오류 발생: {e}")
 
     async def fetch_riot_data(self, platform, name, tag):
         routing = self.region_map.get(platform, 'asia')
