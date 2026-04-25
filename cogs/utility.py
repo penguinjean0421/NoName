@@ -1,6 +1,7 @@
 import json
 import os
 import random
+from typing import Union
 import discord
 from discord.ext import commands
 
@@ -81,25 +82,35 @@ class Utility(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command(name="kill")
-    async def kill_reason(self, ctx, member: discord.Member = None):
-        target = member if member else ctx.author
+    async def kill_reason(self, ctx, *, target_input: Union[discord.Member, str] = None):
+        if target_input is None:
+            target_name=ctx.author.display_name
+        else:
+            if isinstance(target_input, discord.Member):
+                target_name=target_input.display_name
+            else:
+                target_name=target_input
+
         chosen_msg = random.choice(self.death_messages)
 
         if "{attacker}" in chosen_msg:
             embed_color = 0xff0000
-
-            if member is None or member == ctx.author:
-                attacker_name = f"[**{random.choice(self.monsters)}**]"
+            if target_input is None or target_input == ctx.author:
+                attacker_name=f"[**{random.choice(self.monsters)}**]"
             else:
-                attacker_name = f"[**{ctx.author.display_name}**]"
-
-            full_message = chosen_msg.format(attacker=attacker_name)
+                possible_attackers = [
+                    f"[**{random.choice(self.monsters)}**]",
+                    f"[**{ctx.author.display_name}**]"
+                ]
+                attacker_name = random.choice(possible_attackers)
+            
+            full_message=chosen_msg.format(attacker=attacker_name)
         else:
             embed_color=0x36393F
-            full_message = chosen_msg
+            full_message=chosen_msg
 
         embed=discord.Embed(
-            description=f"[**{target.display_name}**]이(가) {full_message}",
+            description=f"[**{target_name}**]이(가) {full_message}",
             color=embed_color
         )
         await ctx.send(embed=embed)
